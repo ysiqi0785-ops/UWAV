@@ -1,0 +1,56 @@
+set -e
+
+PRETRAINED_TRANSFORMER_DIR=./temp_train_logs/TemporalTransformer_UnAV_20250321_121739
+
+python main.py \
+    --seed 20000 \
+    --mode train \
+    --prefix HAN_soft_label_reweight_soft_mixup \
+    --log_dir temp_train_logs \
+    --model HAN \
+    --dataset LLP \
+    --cal_video_loss \
+    --cal_segment_loss \
+    --apply_uncertainty \
+    --apply_reweighting \
+    --reweight_type inverse_freq \
+    --pos_weight 0.5 \
+    --cal_mixup_loss \
+    --alpha 1.7 \
+    --apply_uncertainty_mixup \
+    --audio_dir ./data/LLP/feats/vggish \
+    --video_dir ./data/LLP/feats/res152 \
+    --st_dir ./data/LLP/feats/r2plus1d_18 \
+    --v_pseudo_data_dir "$PRETRAINED_TRANSFORMER_DIR/LLP_Dataset/v_segmentwise_pseudo_labels" \
+    --a_pseudo_data_dir "$PRETRAINED_TRANSFORMER_DIR/LLP_Dataset/a_segmentwise_pseudo_labels" \
+    --v_logit_dir "$PRETRAINED_TRANSFORMER_DIR/LLP_Dataset/v_segmentwise_logits" \
+    --a_logit_dir "$PRETRAINED_TRANSFORMER_DIR/LLP_Dataset/a_segmentwise_logits" \
+    --v_threshold_path "$PRETRAINED_TRANSFORMER_DIR/LLP_Dataset/v_classwise_threhsolds.npy" \
+    --a_threshold_path "$PRETRAINED_TRANSFORMER_DIR/LLP_Dataset/a_classwise_threhsolds.npy" \
+    --clip_feat_dir ./data/LLP/feats_CLIP/segment_feats \
+    --clap_feat_dir ./data/LLP/feats_CLAP/segment_feats \
+    --input_v_2d_dim 2048 \
+    --input_a_dim 128 \
+    --label_train ./data/LLP/AVVP_train.csv \
+    --label_val ./data/LLP/AVVP_val_pd.csv \
+    --label_test ./data/LLP/AVVP_test_pd.csv \
+    --gt_audio_csv ./data/LLP/AVVP_eval_audio.csv \
+    --gt_visual_csv ./data/LLP/AVVP_eval_visual.csv \
+    --batch_size 64 \
+    --epochs 80 \
+    --warm_up_epoch 10 \
+    --lr 1e-4 \
+    --lr_min 5e-6 \
+    --optimizer adamw \
+    --weight_decay 1e-4 \
+    --scheduler warm_up_cos_anneal \
+    --grad_norm 1.0 \
+    --beta1 0.9 \
+    --eps 1e-8 \
+    --hidden_dim 512 \
+    --nhead 16 \
+    --ff_dim 2048 \
+    --num_proj_layers 1 \
+    --num_han_layers 5 \
+    --num_MMIL_layers 1 \
+    --dropout 0.1

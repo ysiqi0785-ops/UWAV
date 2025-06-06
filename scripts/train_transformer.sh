@@ -1,0 +1,37 @@
+set -e
+
+python main_pretrain.py \
+    --seed 1000 \
+    --mode train \
+    --prefix TemporalTransformer \
+    --log_dir temp_train_logs \
+    --model TemporalTransformer \
+    --dataset UnAV \
+    --audio_dir ./data/UnAV/feats/audio_features_vggish \
+    --video_dir ./data/UnAV/feats/visual_features_i3d_rgb \
+    --st_dir ./data/UnAV/feats/visual_features_i3d_flow \
+    --clip_feat_dir ./data/UnAV/feats_CLIP/segment_feats \
+    --clap_feat_dir ./data/UnAV/feats_CLAP/segment_feats \
+    --clip_event_feat_path ./data/UnAV/feats_CLIP/event_feats/all_event_feats.npy \
+    --clap_event_feat_path ./data/UnAV/feats_CLAP/event_feats/all_event_feats.npy \
+    --label_all ./data/UnAV/unav100_annotations.json \
+    --batch_size 64 \
+    --epochs 80 \
+    --lr 1e-4 \
+    --lr_min 1e-5 \
+    --optimizer adamw \
+    --weight_decay 1e-3 \
+    --scheduler warm_up_cos_anneal \
+    --warm_up_epoch 10 \
+    --grad_norm 2.0 \
+    --beta1 0.5 \
+    --eps 1e-8 \
+    --input_a_dim 512 \
+    --input_v_2d_dim 768 \
+    --input_v_3d_dim 1024 \
+    --hidden_dim 1024 \
+    --nhead 16 \
+    --ff_dim 2048 \
+    --dropout 0.3 \
+    --num_layers 5 \
+    --save_interval 20
